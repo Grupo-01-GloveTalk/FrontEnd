@@ -1,0 +1,127 @@
+.calibracion-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 90vh;
+    background-color: #f8f9fa;
+    padding: 2rem;
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Título general */
+.titulo {
+    color: #282c34;
+    font-size: 2.4rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* Panel blanco estilo tarjeta */
+.panel {
+    background-color: #ffffff;
+    padding: 1.8rem;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 700px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 1rem;
+}
+
+.panel h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #343a40;
+}
+
+/* Grid de sensores MPU */
+.sensors-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.sensor-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0.8rem;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+/* Sensor conectado (verde) */
+.sensor-box.ok {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #28a745;
+}
+
+/* Sensor desconectado (rojo) */
+.sensor-box.fail {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #dc3545;
+}
+
+.status-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-top: 0.5rem;
+}
+
+.status-dot.green {
+    background-color: #28a745;
+}
+
+.status-dot.red {
+    background-color: #dc3545;
+}
+
+/* Indicadores */
+.indicadores p {
+    font-size: 1.1rem;
+    margin: 0.4rem 0;
+    color: #495057;
+}
+
+/* Botón Calibrar */
+.btn-calibrar {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    width: 100%;
+    max-width: 350px;
+}
+
+.btn-calibrar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.hand-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hand-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #343a40;
+    margin-bottom: 0.8rem;
+}

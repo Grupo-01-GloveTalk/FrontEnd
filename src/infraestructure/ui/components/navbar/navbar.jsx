@@ -21,6 +21,11 @@ const Navbar = () => {
         setMenuOpen(false);
     };
 
+    const handlerCalibrationClick = () => {
+        navigate("/calibration");
+        setMenuOpen(false);
+    };
+
     const toggleMenu = () => setMenuOpen(!menuOpen);
 
     return (
@@ -38,7 +43,7 @@ const Navbar = () => {
                     </a>
                 </li>
                 <li>
-                    <a href="#traductor" onClick={handlerTraductorClick}>
+                    <a href="#traductor" onClick={handlerCalibrationClick}>
                         Calibración
                     </a>
                 </li>

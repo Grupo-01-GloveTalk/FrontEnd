@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import "./Calibracion.css";
+import "./calibration.css";
 
-export default function Calibracion() {
+export function Calibration() {
     const [ws, setWs] = useState(null);
     const [fps, setFps] = useState(0);
     const [latency, setLatency] = useState(0);
@@ -66,13 +66,45 @@ export default function Calibracion() {
             <div className="panel">
                 <h2>Estado de Sensores MPU6050</h2>
                 <div className="sensors-grid">
-                    {sensors.map((s) => (
-                        <div key={s.id} className={`sensor-box ${s.connected ? "ok" : "fail"}`}>
-                            <span>MPU {s.id}</span>
-                            <div className={`status-dot ${s.connected ? "green" : "red"}`}></div>
-                        </div>
-                    ))}
+
+                    {/* Mano Izquierda */}
+                    <div className="hand-column">
+                        <h3 className="hand-title">✋ Mano Izquierda</h3>
+
+                        {sensors
+                            .filter(s => s.hand === "L")
+                            .sort((a, b) => a.finger - b.finger)
+                            .map((s) => (
+                                <div
+                                    key={`L${s.finger}`}
+                                    className={`sensor-box ${s.connected ? "ok" : "fail"}`}
+                                >
+                                    <span>L{s.finger}</span>
+                                    <div className={`status-dot ${s.connected ? "green" : "red"}`}></div>
+                                </div>
+                            ))}
+                    </div>
+
+                    {/* Mano Derecha */}
+                    <div className="hand-column">
+                        <h3 className="hand-title">🤚 Mano Derecha</h3>
+
+                        {sensors
+                            .filter(s => s.hand === "R")
+                            .sort((a, b) => a.finger - b.finger)
+                            .map((s) => (
+                                <div
+                                    key={`R${s.finger}`}
+                                    className={`sensor-box ${s.connected ? "ok" : "fail"}`}
+                                >
+                                    <span>R{s.finger}</span>
+                                    <div className={`status-dot ${s.connected ? "green" : "red"}`}></div>
+                                </div>
+                            ))}
+                    </div>
+
                 </div>
+
             </div>
 
             {/* Indicadores */}
