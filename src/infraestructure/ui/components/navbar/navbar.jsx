@@ -38,6 +38,11 @@ const Navbar = () => {
                     </a>
                 </li>
                 <li>
+                    <a href="#traductor" onClick={handlerTraductorClick}>
+                        Calibración
+                    </a>
+                </li>
+                <li>
                     <a href="#historial" onClick={handlerHistoryClick}>
                         Historial
                     </a>
