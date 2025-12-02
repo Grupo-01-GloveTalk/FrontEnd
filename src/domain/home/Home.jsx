@@ -186,7 +186,6 @@ export function Home() {
                 {/* 🧤 === VISTA 3D DEL GUANTE === */}
                 {lastSensorData && (
                     <div className="hand3d-container">
-                        <h2>🧤 Vista 3D del Guante</h2>
                         <Hand3D sensorData={lastSensorData} />
                     </div>
                 )}

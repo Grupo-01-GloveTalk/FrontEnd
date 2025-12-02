@@ -46,8 +46,11 @@ export function Login() {
                         required
                     />
                 </div>
+
                 <button type="submit" className="login-button" onClick={handlerLoginClick}>Login</button>
                 <button type="submit" className="register-button" onClick={handlerRegisterCLick} >Register</button>
+                <button type="submit" className="guess-button" onClick={handlerLoginClick}>Invitado</button>
+
             </form>
         </div>
     );
