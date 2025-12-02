@@ -6,7 +6,6 @@ export function Calibration() {
     const [fps, setFps] = useState(0);
     const [latency, setLatency] = useState(0);
     const [sensors, setSensors] = useState([]);
-    const [lastPingTime, setLastPingTime] = useState(null);
 
     useEffect(() => {
         const socket = new WebSocket("ws://localhost:8000/ws");
@@ -14,23 +13,24 @@ export function Calibration() {
 
         socket.onopen = () => {
             console.log("🟢 WebSocket conectado");
-            sendPing();
+            sendPing(socket);  // Enviar ping al conectar
         };
 
         socket.onmessage = (event) => {
             const msg = JSON.parse(event.data);
 
+            // === FPS ===
             if (msg.type === "fps") {
                 setFps(msg.value.toFixed(1));
             }
 
+            // === LATENCIA REAL ===
             if (msg.type === "latency") {
                 const now = Date.now();
-                if (lastPingTime) {
-                    setLatency(now - lastPingTime);
-                }
+                setLatency(now - msg.timestamp);
             }
 
+            // === ESTADO DE SENSORES ===
             if (msg.type === "mpuStatus") {
                 setSensors(msg.sensors);
             }
@@ -43,13 +43,18 @@ export function Calibration() {
         return () => socket.close();
     }, []);
 
+    // Enviar ping con timestamp
     const sendPing = () => {
         if (ws) {
-            setLastPingTime(Date.now());
-            ws.send(JSON.stringify({ type: "ping" }));
+            const now = Date.now();
+            ws.send(JSON.stringify({
+                type: "ping",
+                timestamp: now
+            }));
         }
     };
 
+    // Botón de calibrar
     const calibrar = () => {
         if (ws) {
             ws.send(JSON.stringify({ type: "calibrate" }));
@@ -67,7 +72,7 @@ export function Calibration() {
                 <h2>Estado de Sensores MPU6050</h2>
                 <div className="sensors-grid">
 
-                    {/* Mano Izquierda */}
+                    {/* MANO IZQUIERDA */}
                     <div className="hand-column">
                         <h3 className="hand-title">✋ Mano Izquierda</h3>
 
@@ -85,7 +90,7 @@ export function Calibration() {
                             ))}
                     </div>
 
-                    {/* Mano Derecha */}
+                    {/* MANO DERECHA */}
                     <div className="hand-column">
                         <h3 className="hand-title">🤚 Mano Derecha</h3>
 
@@ -104,7 +109,6 @@ export function Calibration() {
                     </div>
 
                 </div>
-
             </div>
 
             {/* Indicadores */}
@@ -112,6 +116,10 @@ export function Calibration() {
                 <h2>Indicadores del Sistema</h2>
                 <p><strong>Velocidad de traducción (FPS):</strong> {fps}</p>
                 <p><strong>Latencia WebSocket:</strong> {latency} ms</p>
+
+                <button className="btn-ping" onClick={sendPing}>
+                    🔄 Medir Latencia
+                </button>
             </div>
 
             <button className="btn-calibrar" onClick={calibrar}>

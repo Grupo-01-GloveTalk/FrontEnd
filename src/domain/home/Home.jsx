@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Home.css";
 import Navbar from "../../infraestructure/ui/components/navbar/navbar.jsx";
+import { Hand3D } from "../../components/hand3d/Hand3D.jsx";   // 👈 IMPORTANTE
 import { translationService } from "../../infraestructure/services/translationService.js";
 
 export function Home() {
@@ -33,11 +34,10 @@ export function Home() {
 
     const parseSensorDataLine = (rawLine) => {
         const tokens = rawLine.split(",");
-
         const parsed = [];
 
         for (let i = 0; i < tokens.length; i++) {
-            const marker = tokens[i]; // "L" o "R"
+            const marker = tokens[i];
             const isLeftOrRight = marker === "L" || marker === "R";
 
             if (isLeftOrRight && (i + 8) < tokens.length) {
@@ -55,9 +55,8 @@ export function Home() {
                 }
             }
 
-            i += 8; // Salta al siguiente bloque
+            i += 8;
         }
-
         return parsed;
     };
 
@@ -71,23 +70,19 @@ export function Home() {
 
         socket.onmessage = (event) => {
             const message = JSON.parse(event.data);
+
             if (message.type === "sensorData") {
                 const rawLine = message.data;
                 const parsed = parseSensorDataLine(rawLine);
 
-
-
-                    if (parsed.length === 60) {
+                if (parsed.length === 60) {
                     setLastSensorData(parsed);
                     setGestureCount(prev => prev + 1);
 
                     if (isTranslating) {
-                        console.log("🧠 Ejecutando traducción automática con:", parsed);
                         translateSensorDataToLetter(parsed);
                     }
-                }
-
-                else {
+                } else {
                     console.warn("❌ Datos incompletos recibidos:", parsed.length);
                 }
             }
@@ -97,29 +92,8 @@ export function Home() {
             console.error("❌ WebSocket error:", err);
         };
 
-        return () => {
-            socket.close();
-        };
+        return () => socket.close();
     }, [isTranslating]);
-
-
-    const enviarDatosAlBackend = async (sensorData) => {
-        try {
-            const res = await fetch("http://127.0.0.1:8000/predict", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ data: sensorData })
-            });
-
-            const result = await res.json();
-            const letra = result.prediction || "?";
-            setCurrentWord(prev => prev + letra);
-            console.log("🔤 Letra traducida:", letra);
-        } catch (err) {
-            console.error("❌ Error al enviar datos al backend:", err);
-        }
-    };
-
 
 
     const translateSensorDataToLetter = async (sensorData) => {
@@ -135,18 +109,11 @@ export function Home() {
             if (json.prediction) {
                 setCurrentWord((prev) => prev + json.prediction);
                 setTranslation((prev) => prev + json.prediction);
-                console.log("🔤 Letra traducida:", json.prediction);
             } else {
                 setCurrentWord("?");
-                console.error("❌ Respuesta inesperada:", json);
             }
-
-            console.log("📨 Enviando datos al backend:", sensorData);
-
-
         } catch (error) {
             setCurrentWord("❌ Error al traducir datos");
-            console.error("❌ Error al traducir datos:", error);
         }
     };
 
@@ -160,12 +127,11 @@ export function Home() {
         setIsTranslating(false);
         if (translation) {
             const utterance = new SpeechSynthesisUtterance(translation);
-            utterance.lang = "es-PE"; // Puedes cambiar a "en-US" o "es-ES"
-            speechSynthesis.cancel(); // Detiene cualquier reproducción anterior
+            utterance.lang = "es-PE";
+            speechSynthesis.cancel();
             speechSynthesis.speak(utterance);
         }
     };
-
 
 
     return (
@@ -176,18 +142,15 @@ export function Home() {
 
                 <div className="glove-status-section">
                     <div className={`connection-status ${connectionStatus}`}>
-                        {connectionStatus === 'checking' && '🔄 Verificando conexión...'}
-                        {connectionStatus === 'connected' && '🟢 Guante conectado'}
-                        {connectionStatus === 'disconnected' && '🔴 Guante no conectado'}
-                        {connectionStatus === 'error' && '⚠️ Error al verificar'}
+                        {connectionStatus === "checking" && "🔄 Verificando conexión..."}
+                        {connectionStatus === "connected" && "🟢 Guante conectado"}
+                        {connectionStatus === "disconnected" && "🔴 Guante no conectado"}
+                        {connectionStatus === "error" && "⚠️ Error al verificar"}
                     </div>
                 </div>
 
 
                 <div className="control-buttons">
-
-
-
                     <button
                         onClick={startTranslation}
                         disabled={connectionStatus !== "connected" || isTranslating}
@@ -195,7 +158,6 @@ export function Home() {
                     >
                         🎯 Iniciar Traducción
                     </button>
-
 
                     {(translation || currentWord) && (
                         <button
@@ -208,7 +170,6 @@ export function Home() {
                         >
                             🔄 Limpiar
                         </button>
-
                     )}
 
                     {isTranslating && (
@@ -219,10 +180,19 @@ export function Home() {
                             ⏹️ Detener y Reproducir Audio
                         </button>
                     )}
-
-
-
                 </div>
+
+
+                {/* 🧤 === VISTA 3D DEL GUANTE === */}
+                {lastSensorData && (
+                    <div className="hand3d-container">
+                        <h2>🧤 Vista 3D del Guante</h2>
+                        <Hand3D sensorData={lastSensorData} />
+                    </div>
+                )}
+
+
+
 
                 <div className="translation-section">
                     <label>💬 Traducción:</label>
@@ -234,13 +204,3 @@ export function Home() {
         </>
     );
 }
-
-
-// {isTranslating && (
-//     <button
-//         onClick={() => setIsTranslating(false)}
-//         className="translate-btn stop"
-//     >
-//         ⏹️ Detener Traducción
-//     </button>
-// )}
